@@ -5,6 +5,10 @@ output:
   flexdashboard::flex_dashboard:
     storyboard: true
 ---
+```{r}
+library(tidyverse)
+source("compmus.R")
+```
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
@@ -13,6 +17,331 @@ library(plotly)
 library(ggrepel)  
 library(viridis)
 
+```
+-----------------------------------------------------------------------
+### Chromagram of my first track
+
+```{r, fig.width=12, fig.height=6}
+"features/aleksandra-b-1.json" |>                       # Changed the track to mine
+  compmus_chroma(norm = "manhattan") |>                 # Change the norm
+  ggplot(aes(x = time, y = pc, fill = value)) + 
+  geom_raster() +
+  scale_y_continuous(
+    breaks = 0:11,
+    minor_breaks = NULL,
+    labels = c(
+                "C", "C#|Db", "D", "D#|Eb",
+                "E", "F", "F#|Gb", "G",
+                "G#|Ab", "A", "A#|Bb", "B"
+              )
+  ) +
+   scale_x_continuous(
+    breaks = seq(0, 200, 50),  # More structured x-axis ticks
+    minor_breaks = NULL
+  ) +
+  scale_fill_viridis_c(option = "inferno", begin = 0.2, end = 0.8) +  # More readable color scale
+  labs(
+    title = "Chromagram of my first track",
+    x = "Time (s)",
+    y = "Pitch Class",
+    fill = "Intensity"
+  ) +
+  theme_minimal(base_size = 14) +  
+  theme(
+    axis.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    panel.grid.major = element_line(color = "gray80", size = 0.3),
+    panel.grid.minor = element_blank()
+  )
+```
+
+### Chromagram of my second track
+```{r, fig.width=12, fig.height=6}
+"features/aleksandra-b-2.json" |>                       # Changed the track to mine
+  compmus_chroma(norm = "manhattan") |>                 # Change the norm
+  ggplot(aes(x = time, y = pc, fill = value)) + 
+  geom_raster() +
+  scale_y_continuous(
+    breaks = 0:11,
+    minor_breaks = NULL,
+    labels = c(
+                "C", "C#|Db", "D", "D#|Eb",
+                "E", "F", "F#|Gb", "G",
+                "G#|Ab", "A", "A#|Bb", "B"
+              )
+  ) +
+   scale_x_continuous(
+    breaks = seq(0, 200, 50),  # More structured x-axis ticks
+    minor_breaks = NULL
+  ) +
+  scale_fill_viridis_c(option = "cividis", begin = 0.2, end = 0.8) +  # More readable color scale
+  labs(
+    title = "Chromagram of my second track",
+    x = "Time (s)",
+    y = "Pitch Class",
+    fill = "Intensity"
+  ) +
+  theme_minimal(base_size = 14) +  
+  theme(
+    axis.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    panel.grid.major = element_line(color = "gray80", size = 0.3),
+    panel.grid.minor = element_blank()
+  )
+```
+
+
+
+### Cepstrogram of my first track
+
+```{r}
+library(RColorBrewer)
+```
+
+```{r, fig.width=14, fig.height=6}
+"features/aleksandra-b-1.json" |>                       # Track file
+  compmus_mfccs(norm = "identity") |>                  # MFCC computation
+  ggplot(aes(x = time, y = mfcc, fill = value)) + 
+  geom_raster() +
+  scale_y_continuous(
+    breaks = seq(0, 12, 2),  # More structured y-axis
+    minor_breaks = NULL
+  ) +
+  scale_x_continuous(
+    breaks = seq(0, 200, 50), # More structured x-axis
+    minor_breaks = NULL
+  ) +
+  scale_fill_distiller(palette = "Spectral", direction = 1) + # Better color contrast
+  labs(
+    title = "Cepstrogram of my first track",
+    x = "Time (s)",
+    y = "Coefficient Number",
+    fill = "Intensity"
+  ) +
+  theme_minimal(base_size = 14) +  
+  theme(
+    axis.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    panel.grid.major = element_line(color = "gray80", size = 0.3),
+    panel.grid.minor = element_blank()
+  )                              
+```
+
+### Cepstrogram of my second track
+
+```{r, fig.width=14, fig.height=6}
+"features/aleksandra-b-2.json" |>                       # Track file
+  compmus_mfccs(norm = "identity") |>                  # MFCC computation
+  ggplot(aes(x = time, y = mfcc, fill = value)) + 
+  geom_raster() +
+  scale_y_continuous(
+    breaks = seq(0, 12, 2),  # More structured y-axis
+    minor_breaks = NULL
+  ) +
+  scale_x_continuous(
+    breaks = seq(0, 200, 50), # More structured x-axis
+    minor_breaks = NULL
+  ) +
+  scale_fill_distiller(palette = "RdYlBu", direction = 1) + # Better color contrast
+  labs(
+    title = "Cepstrogram of my second track",
+    x = "Time (s)",
+    y = "Coefficient Number",
+    fill = "Intensity"
+  ) +
+  theme_minimal(base_size = 14) +  
+  theme(
+    axis.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    panel.grid.major = element_line(color = "gray80", size = 0.3),
+    panel.grid.minor = element_blank()
+  )                              
+```
+
+### Chroma-based self-similarity for my first track
+
+```{r, fig.width=14, fig.height=7}
+"features/aleksandra-b-1.json" |>                     # Change the track
+  compmus_chroma(norm = "identity") |>                # Change the norm
+  compmus_self_similarity(
+    feature = pc,
+    distance = "euclidean"                            # Change the distance metric
+  ) |>
+  
+  # Use ggplot to visualize the matrix
+  ggplot(aes(x = xtime, y = ytime, fill = d)) + 
+  geom_tile() +                                       # Better visualization than geom_raster()
+  
+  # Choose a better color scale
+  scale_fill_viridis_c(guide = "none") +
+
+  # Improve axis labels
+  scale_x_continuous(
+    breaks = seq(0, 200, 50),
+    minor_breaks = NULL
+  ) +
+  scale_y_continuous(
+    breaks = seq(0, 200, 50),
+    minor_breaks = NULL
+  ) +
+
+  # Improve labels and theme
+  labs(
+    title = "Self-Similarity Matrix of My First Track",
+    x = "Time (s)",
+    y = NULL,
+    fill = "Distance"
+  ) +
+  theme_minimal(base_size = 14) +  
+  theme(
+    axis.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    panel.grid.major = element_line(color = "gray80", size = 0.3),
+    panel.grid.minor = element_blank()
+  )    
+```
+
+### Chroma-based self-similarity for my second track
+
+```{r, fig.width=14, fig.height=7}
+"features/aleksandra-b-2.json" |>                     # Change the track
+  compmus_chroma(norm = "identity") |>                # Change the norm
+  compmus_self_similarity(
+    feature = pc,
+    distance = "euclidean"                            # Change the distance metric
+  ) |>
+  
+  # Use ggplot to visualize the matrix
+  ggplot(aes(x = xtime, y = ytime, fill = d)) + 
+  geom_tile() +                                       # Better visualization than geom_raster()
+  
+  # Choose a better color scale
+  scale_fill_viridis_c(guide = "none") +
+
+  # Improve axis labels
+  scale_x_continuous(
+    breaks = seq(0, 200, 50),
+    minor_breaks = NULL
+  ) +
+  scale_y_continuous(
+    breaks = seq(0, 200, 50),
+    minor_breaks = NULL
+  ) +
+
+  # Improve labels and theme
+  labs(
+    title = "Self-Similarity Matrix of My Second Track",
+    x = "Time (s)",
+    y = NULL,
+    fill = "Distance"
+  ) +
+  theme_minimal(base_size = 14) +  
+  theme(
+    axis.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    panel.grid.major = element_line(color = "gray80", size = 0.3),
+    panel.grid.minor = element_blank()
+  )    
+```
+
+### Timbre-based self-similarity for my first track
+
+```{r, fig.width=14, fig.height=7}
+similarity_matrix <- "features/aleksandra-b-1.json" |>  
+  compmus_mfccs(norm = "identity") |>  
+  compmus_self_similarity(
+    feature = mfcc,
+    distance = "euclidean"
+  )
+
+# Debugging: Check if 'd' exists
+print(names(similarity_matrix))  # Ensure 'd' is in the data
+
+# Now plot using the stored object
+ggplot(similarity_matrix, aes(x = xtime, y = ytime, fill = d)) +  
+  geom_tile() +  # Use geom_tile() for better visualization
+  
+  # Improved color contrast
+  scale_fill_viridis_c(guide = "none") +
+
+  # Improved axis labels and readability
+  scale_x_continuous(
+    breaks = seq(0, 200, 50),
+    minor_breaks = NULL
+  ) +
+  scale_y_continuous(
+    breaks = seq(0, 200, 50),
+    minor_breaks = NULL
+  ) +
+
+  # Add meaningful labels
+  labs(
+    title = "Timbre-based self-similarity for my first track",
+    x = "Time (s)",
+    y = NULL,
+    fill = "Distance"
+  ) +
+  theme_minimal(base_size = 14) +  
+  theme(
+    axis.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    panel.grid.major = element_line(color = "gray80", size = 0.3),
+    panel.grid.minor = element_blank()
+  )
+```
+
+### Timbre-based self-similarity for my second track
+
+```{r, fig.width=14, fig.height=7}
+similarity_matrix <- "features/aleksandra-b-2.json" |>  
+  compmus_mfccs(norm = "identity") |>  
+  compmus_self_similarity(
+    feature = mfcc,
+    distance = "euclidean"
+  )
+
+# Debugging: Check if 'd' exists
+print(names(similarity_matrix))  # Ensure 'd' is in the data
+
+# Now plot using the stored object
+ggplot(similarity_matrix, aes(x = xtime, y = ytime, fill = d)) +  
+  geom_tile() +  # Use geom_tile() for better visualization
+  
+  # Improved color contrast
+  scale_fill_viridis_c(guide = "none") +
+
+  # Improved axis labels and readability
+  scale_x_continuous(
+    breaks = seq(0, 200, 50),
+    minor_breaks = NULL
+  ) +
+  scale_y_continuous(
+    breaks = seq(0, 200, 50),
+    minor_breaks = NULL
+  ) +
+
+  # Add meaningful labels
+  labs(
+    title = "Timbre-based self-similarity for my second track",
+    x = "Time (s)",
+    y = NULL,
+    fill = "Distance"
+  ) +
+  theme_minimal(base_size = 14) +  
+  theme(
+    axis.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    panel.grid.major = element_line(color = "gray80", size = 0.3),
+    panel.grid.minor = element_blank()
+  )
 ```
 
 ### Introduction: Understanding the Dataset (First Homework)
@@ -25,6 +354,7 @@ Arousal → The energy level of a song.
 Tempo (BPM) → The speed of the song.
 Danceability → How easy it is to dance to the song.
 Instrumentalness → How much of the track is instrumental.
+
 
 ### Visualisation: Tempo vs Arousal
 ```{r}
@@ -87,6 +417,7 @@ p_interactive  # This ensures the plot is displayed in Flexdashboard
 
 
 ```
+
 ### Conclusion
 Songs with a higher tempo (BPM) tend to have a higher arousal level.
 Some slower songs still have high energy, possibly due to instrumentation.
