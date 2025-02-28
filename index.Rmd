@@ -1,79 +1,97 @@
 ---
-title: "Testovoe"
+title: "Music Analysis Dashboard"
 author: Alex
 output: 
   flexdashboard::flex_dashboard:
     storyboard: true
-    theme: readable
 ---
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
-library(tidyverse)
+library(tidyverse)  
 library(plotly)
+library(ggrepel)  
+library(viridis)
+
 ```
 
-### My first chart
+### Introduction: Understanding the Dataset (First Homework)
+Introduction
+This dashboard explores a dataset of songs, analyzing their tempo, arousal, and danceability.
+We will visualize key characteristics and provide insights on how they relate to each other.
 
+Dataset Overview
+Arousal → The energy level of a song.
+Tempo (BPM) → The speed of the song.
+Danceability → How easy it is to dance to the song.
+Instrumentalness → How much of the track is instrumental.
+
+### Visualisation: Tempo vs Arousal
 ```{r}
+# Load dataset
 aisc2024 <- read_csv("aisc2024.csv")
-```
-```{r}
-library(ggplot2)
-library(ggrepel)
 
-aisc2024 |> 
-  ggplot(
-    aes(
-      x = tempo,
-      y = arousal,
-      size = instrumentalness,
-      colour = danceability
-    )
-  ) +
-  geom_point(alpha = 0.8, stroke = 0.2) +   # Increase alpha for visibility, add stroke for contrast
-  geom_rug(linewidth = 0.2, sides = "b") + # Keep rug only at the bottom
-  geom_text_repel(  # Better placement of text labels
-    aes(label = ifelse(tempo > 120 & arousal > 4, "Onda Corta - Sud America", "")),
-    size = 4,
-    fontface = "bold",
-    color = "black",  # Make labels stand out
-    nudge_x = 10, 
-    nudge_y = 0.5,
-    box.padding = 0.4,
-    point.padding = 0.4,
-    segment.color = "gray50", # Subtle connector lines
-    max.overlaps = 1 # Prevents duplicate labels
-  ) +
-  scale_x_continuous(         
-    limits = c(50, 200),
-    breaks = seq(50, 200, 50), 
-    minor_breaks = NULL
-  ) +
-  scale_y_continuous(         
-    limits = c(1, 9),
-    breaks = c(1, 5, 9),
-    minor_breaks = NULL
-  ) +
-  scale_colour_viridis_c(option = "C") +  # A more visually appealing Viridis color scale
-  scale_size_continuous(      
-    trans = "sqrt", 
-    guide = "none"
-  ) +
+# Ensure dataset exists
+if (!exists("aisc2024") || nrow(aisc2024) == 0) {
+  stop("Error: The dataset 'aisc2024' is not found or empty.")
+}
+
+# Create base ggplot
+p <- ggplot(aisc2024, aes(
+    x = tempo,
+    y = arousal,
+    size = instrumentalness,
+    colour = danceability
+  )) +
+  geom_point(alpha = 0.8) +  
+  geom_rug(linewidth = 0.2, sides = "b") +  
+  scale_x_continuous(limits = c(50, 200), breaks = seq(50, 200, 50)) +
+  scale_y_continuous(limits = c(1, 9), breaks = c(1, 5, 9)) +
+  scale_colour_viridis_c(option = "C") +  
+  scale_size_continuous(trans = "sqrt", guide = "none") +
   theme_minimal(base_size = 14) +  
   theme(
     legend.position = "right",
     axis.title = element_text(size = 14, face = "bold"),
     plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
-    panel.grid.major = element_line(size = 0.3, linetype = "dashed"), # Subtle gridlines
+    panel.grid.major = element_line(size = 0.3, linetype = "dashed"),
     panel.grid.minor = element_blank()
   ) +
-  labs(                       
+  labs(
     title = "Music Characteristics: Tempo vs Arousal",
     x = "Tempo (BPM)",
     y = "Arousal Level",
     colour = "Danceability"
   )
-ggplotly()
+
+# Static ggplot2 (with text labels)
+p_static <- p + 
+  geom_text_repel(
+    aes(label = ifelse(tempo > 120 & arousal > 4, "Onda Corta - Sud America", NA)),  
+    size = 4,
+    fontface = "bold",
+    color = "black",
+    nudge_x = 10, 
+    nudge_y = 0.5,
+    box.padding = 0.4,
+    point.padding = 0.4,
+    segment.color = "gray50",
+    max.overlaps = 3  
+  )
+
+# Interactive ggplotly (without text labels)
+p_interactive <- ggplotly(p)
+
+# Render the correct plot
+p_interactive  # This ensures the plot is displayed in Flexdashboard
+
+
 ```
+### Conclusion
+Songs with a higher tempo (BPM) tend to have a higher arousal level.
+Some slower songs still have high energy, possibly due to instrumentation.
+Danceability varies across tempos, but higher instrumentalness often lowers danceability.
+
+
+
 
