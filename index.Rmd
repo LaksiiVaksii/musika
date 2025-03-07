@@ -4,9 +4,13 @@ author: Alex
 output: 
   flexdashboard::flex_dashboard:
     storyboard: true
-editor_options: 
-  markdown: 
-    wrap: sentence
+    self_contained: true 
+    theme:
+      version: 4
+      bg: "#101010"
+      fg: "#FDF7F7" 
+      primary: "#ED79F9"
+      navbar-bg: "#3ADAC6"
 ---
 
 ```{r}
@@ -20,13 +24,11 @@ library(tidyverse)
 library(plotly)
 library(ggrepel)  
 library(viridis)
-
+library(gridExtra)
+library(rvest)
 ```
 
-------------------------------------------------------------------------
-
-### Chordograms of my first track
-
+### Chordagrams
 ```{r}
 #      C     C#    D     Eb    E     F     F#    G     Ab    A     Bb    B
 major_chord <-
@@ -111,37 +113,43 @@ key_templates <-
   )
 ```
 
-```{r}
-"features/aleksandra-b-1.json" |> 
+```{r, out.width="100%", out.height="60%"}
+
+chrdgrm1 <- "features/aleksandra-b-1.json" |> 
   compmus_chroma(norm = "manhattan") |> 
   compmus_match_pitch_templates(
-    key_templates,         # Change to chord_templates if desired
-    norm = "manhattan",       # Try different norms (and match it with what you used in `compmus_chroma`)
-    distance = "cosine"   # Try different distance metrics
+    chord_templates,         # Change to chord_templates if desired
+    norm = "manhattan",     # Try different norms (and match it with what you used in `compmus_chroma`)
+    distance = "manhattan"   # Try different distance metrics
   ) |>
   ggplot(aes(x = time, y = name, fill = d)) + 
   geom_raster() +
-  scale_fill_viridis_c(option = "cividis", begin = 0.2, end = 0.8) +               # Change the colours?
+  scale_fill_viridis_c(guide = "none") +               # Change the colours?
   labs(x = "Time (s)", y = "Template", fill = NULL) +
-  theme_classic() 
-```
+  theme_classic()                                      # Change the theme?
 
-### Chordograms of my second track
+chrdgrm1
 
-```{r}
-"features/aleksandra-b-2.json" |> 
-  compmus_chroma(norm = "manhattan") |> 
+chrdgrm2 <- "features/aleksandra-b-2.json" |> 
+  compmus_chroma(norm = "euclidean") |> 
   compmus_match_pitch_templates(
     key_templates,         # Change to chord_templates if desired
-    norm = "manhattan",       # Try different norms (and match it with what you used in `compmus_chroma`)
-    distance = "cosine"   # Try different distance metrics
+    norm = "euclidean",      # Try different norms (and match it with what you used in `compmus_chroma`)
+    distance = "angular"   # Try different distance metrics
   ) |>
   ggplot(aes(x = time, y = name, fill = d)) + 
   geom_raster() +
-  scale_fill_viridis_c(option = "cividis", begin = 0.2, end = 0.8) +               # Change the colours?
+  scale_fill_viridis_c(guide = "none") +               # Change the colours?
   labs(x = "Time (s)", y = "Template", fill = NULL) +
-  theme_classic() 
+  theme_classic()                                      # Change the theme?
+
+chrdgrm2
+
 ```
+***
+
+Here are my two chordagrams.
+
 
 ### Chromagram of my first track
 
