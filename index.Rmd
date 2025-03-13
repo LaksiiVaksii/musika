@@ -3,101 +3,19 @@ title: "Music Analysis Dashboard"
 author: Alex
 output: 
   flexdashboard::flex_dashboard:
-    storyboard: true
-    self_contained: true 
-    theme:
+    theme: 
       version: 4
-      bg: "#101010"
-      fg: "#FDF7F7" 
-      primary: "#ED79F9"
-      navbar-bg: "#3ADAC6"
+      bootswatch: darkly
 ---
 
-```{r}
-library(tidyverse)
-source("compmus.R")
-```
-
 ```{r setup, include=FALSE}
+library(tidyverse)
 library(flexdashboard)
-library(tidyverse)  
+library(ggplot2)
 library(plotly)
-library(ggrepel)  
-library(viridis)
-library(gridExtra)
-library(rvest)
-```
-### Tempograms for the first track
+library(rjson)
+source("compmus.R")
 
-```{r, out.width="100%", out.height="60%"}
-"features/aleksandra-b-1.json" |>
-  compmus_tempogram(window_size = 8, hop_size = 1, cyclic = FALSE) |>
-  ggplot(aes(x = time, y = bpm, fill = power)) +
-  geom_raster() +
-  scale_fill_viridis_c(guide = "none") +
-  labs(x = "Time (s)", y = "Tempo (BPM)") +
-  theme_classic()
-
-"features/aleksandra-b-2.json" |>
-  compmus_tempogram(window_size = 8, hop_size = 1, cyclic = TRUE) |>
-  ggplot(aes(x = time, y = bpm, fill = power)) +
-  geom_raster() +
-  scale_fill_viridis_c(guide = "none") +
-  labs(x = "Time (s)", y = "Tempo (BPM)") +
-  theme_classic()
-```
-### Tempograms for the second track
-```{r, out.width="100%", out.height="60%"}
-"features/aleksandra-b-2.json" |>
-  compmus_tempogram(window_size = 8, hop_size = 1, cyclic = FALSE) |>
-  ggplot(aes(x = time, y = bpm, fill = power)) +
-  geom_raster() +
-  scale_fill_viridis_c(guide = "none") +
-  labs(x = "Time (s)", y = "Tempo (BPM)") +
-  theme_classic()
-
-```
-
-
-### Novelty Functions: Spectral novelty
-```{r, out.width="100%", out.height="60%"}
-"features/aleksandra-b-1.json" |>
-  compmus_spectral_novelty() |> 
-  ggplot(aes(t, novelty)) +
-  geom_line() +
-  theme_minimal() +
-  labs(x = "Time (s)", y = "Spectral Novelty")
-
-"features/aleksandra-b-2.json" |>
-  compmus_spectral_novelty() |> 
-  ggplot(aes(t, novelty)) +
-  geom_line() +
-  theme_minimal() +
-  labs(x = "Time (s)", y = "Spectral Novelty")
-```
-
-
-### Novelty Functions: Energy novelty
-```{r, out.width="100%", out.height="60%"}
-"features/aleksandra-b-1.json" |>
-  compmus_energy_novelty() |> 
-  ggplot(aes(t, novelty)) +
-  geom_line() +
-  theme_minimal() +
-  labs(x = "Time (s)", y = "Energy Novelty")
-
-"features/aleksandra-b-2.json" |>
-  compmus_energy_novelty() |> 
-  ggplot(aes(t, novelty)) +
-  geom_line() +
-  theme_minimal() +
-  labs(x = "Time (s)", y = "Energy Novelty")
-```
-
-
-### Chordagrams
-```{r}
-#      C     C#    D     Eb    E     F     F#    G     Ab    A     Bb    B
 major_chord <-
   c(   1,    0,    0,    0,    1,    0,    0,    1,    0,    0,    0,    0)
 minor_chord <-
@@ -106,9 +24,9 @@ seventh_chord <-
   c(   1,    0,    0,    0,    1,    0,    0,    1,    0,    0,    1,    0)
 
 major_key <-
-  c(6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88)
+  c(5.0, 2.0, 3.5, 2.0, 4.5, 4.0, 2.0, 4.5, 2.0, 3.5, 1.5, 4.0)
 minor_key <-
-  c(6.33, 2.68, 3.52, 5.38, 2.60, 3.53, 2.54, 4.75, 3.98, 2.69, 3.34, 3.17)
+  c(5.0, 2.0, 3.5, 4.5, 2.0, 4.0, 2.0, 4.5, 3.5, 2.0, 1.5, 4.0)
 
 chord_templates <-
   tribble(
@@ -179,48 +97,61 @@ key_templates <-
     "D#:min", circshift(minor_key, 3)
   )
 ```
+Introduction {.storyboard}
+=========================================
+### Introducing my own tracks
 
-```{r, out.width="100%", out.height="60%"}
+Write text here
 
-chrdgrm1 <- "features/aleksandra-b-1.json" |> 
-  compmus_chroma(norm = "manhattan") |> 
-  compmus_match_pitch_templates(
-    chord_templates,         # Change to chord_templates if desired
-    norm = "manhattan",     # Try different norms (and match it with what you used in `compmus_chroma`)
-    distance = "manhattan"   # Try different distance metrics
-  ) |>
-  ggplot(aes(x = time, y = name, fill = d)) + 
-  geom_raster() +
-  scale_fill_viridis_c(guide = "none") +               # Change the colours?
-  labs(x = "Time (s)", y = "Template", fill = NULL) +
-  theme_classic()                                      # Change the theme?
+### Here is my class corpus visualisation
 
-chrdgrm1
-
-chrdgrm2 <- "features/aleksandra-b-2.json" |> 
-  compmus_chroma(norm = "euclidean") |> 
-  compmus_match_pitch_templates(
-    key_templates,         # Change to chord_templates if desired
-    norm = "euclidean",      # Try different norms (and match it with what you used in `compmus_chroma`)
-    distance = "angular"   # Try different distance metrics
-  ) |>
-  ggplot(aes(x = time, y = name, fill = d)) + 
-  geom_raster() +
-  scale_fill_viridis_c(guide = "none") +               # Change the colours?
-  labs(x = "Time (s)", y = "Template", fill = NULL) +
-  theme_classic()                                      # Change the theme?
-
-chrdgrm2
-
+```{r}
+compmus2025 <- read_csv("C:\\Users\\aneru\\musika2\\compmus2025.csv")
+compmus2025 |>                   # Start with the data
+  ggplot(                     # Set up the plot.
+    aes(
+      x = valence,
+      y = arousal,
+      size = tempo,
+      colour = danceability
+    )
+  ) +
+  geom_point() +  # Scatter plot.
+  geom_smooth() +
+  geom_rug(linewidth = 0.1) + # Add 'fringes' to show data distribution.
+    scale_x_continuous(         # Fine-tune the x axis.
+    limits = c(3, 6.5),
+    breaks = c(3, 4, 5, 6, 7), # Specify grid lines
+    minor_breaks = NULL       # Remove 'minor' grid lines.
+  ) +
+  scale_y_continuous(         # Fine-tune the y axis in the same way.
+    limits = c(3, 8),
+    breaks = c(3, 4, 5, 6, 7, 8),
+    minor_breaks = NULL
+  ) +
+  scale_colour_viridis_c() +  # Use the popular viridis colour palette.
+  scale_size_continuous(      # Fine-tune the sizes of each point.
+    trans = "exp",            # Use an exp transformation to emphasise loud..
+    guide = "none"            # Remove the legend for size.
+  ) +
+  theme_light() +             # Use a simpler theme.
+  labs(                       # Make the titles nice.
+    x = "Valence",
+    y = "Arousal",
+    colour = "Danceability"
+  )
+ggplotly()
 ```
-***
+------------------------------------------------------------------------
 
-Here are my two chordagrams.
+Text.
 
+Chromagram {.storyboard}
+=========================================
 
 ### Chromagram of my first track
 
-```{r, fig.width=12, fig.height=6}
+```{r}
 "features/aleksandra-b-1.json" |>                       # Changed the track to mine
   compmus_chroma(norm = "manhattan") |>                 # Change the norm
   ggplot(aes(x = time, y = pc, fill = value)) + 
@@ -254,10 +185,14 @@ Here are my two chordagrams.
     panel.grid.minor = element_blank()
   )
 ```
+------------------------------------------------------------------------
+
+Text 
+
 
 ### Chromagram of my second track
 
-```{r, fig.width=12, fig.height=6}
+```{r}
 "features/aleksandra-b-2.json" |>                       # Changed the track to mine
   compmus_chroma(norm = "manhattan") |>                 # Change the norm
   ggplot(aes(x = time, y = pc, fill = value)) + 
@@ -291,6 +226,10 @@ Here are my two chordagrams.
     panel.grid.minor = element_blank()
   )
 ```
+------------------------------------------------------------------------
+
+Text 
+
 
 ### Cepstrogram of my first track
 
@@ -328,6 +267,7 @@ library(RColorBrewer)
   )                              
 ```
 
+
 ### Cepstrogram of my second track
 
 ```{r, fig.width=14, fig.height=6}
@@ -360,6 +300,9 @@ library(RColorBrewer)
   )                              
 ```
 
+
+Self-Similarity Matrices {.storyboard}
+=========================================
 ### Chroma-based self-similarity for my first track
 
 ```{r, fig.width=14, fig.height=7}
@@ -542,79 +485,128 @@ ggplot(similarity_matrix, aes(x = xtime, y = ytime, fill = d)) +
   )
 ```
 
-### Introduction: Understanding the Dataset (First Homework)
+Chordogram and Keygram {.storyboard}
+=========================================
+### Chordagrams
 
-Introduction This dashboard explores a dataset of songs, analyzing their tempo, arousal, and danceability.
-We will visualize key characteristics and provide insights on how they relate to each other.
+```{r, out.width="100%", out.height="60%"}
 
-Dataset Overview Arousal → The energy level of a song.
-Tempo (BPM) → The speed of the song.
-Danceability → How easy it is to dance to the song.
-Instrumentalness → How much of the track is instrumental.
+chrdgrm1 <- "features/aleksandra-b-1.json" |> 
+  compmus_chroma(norm = "manhattan") |> 
+  compmus_match_pitch_templates(
+    chord_templates,         # Change to chord_templates if desired
+    norm = "manhattan",     # Try different norms (and match it with what you used in `compmus_chroma`)
+    distance = "manhattan"   # Try different distance metrics
+  ) |>
+  ggplot(aes(x = time, y = name, fill = d)) + 
+  geom_raster() +
+  scale_fill_viridis_c(guide = "none") +               # Change the colours?
+  labs(x = "Time (s)", y = "Template", fill = NULL) +
+  theme_classic()                                      # Change the theme?
 
-### Visualisation: Tempo vs Arousal
+chrdgrm1
 
-```{r}
-# Load dataset
-aisc2024 <- read_csv("aisc2024.csv")
+chrdgrm2 <- "features/aleksandra-b-2.json" |> 
+  compmus_chroma(norm = "euclidean") |> 
+  compmus_match_pitch_templates(
+    key_templates,         # Change to chord_templates if desired
+    norm = "euclidean",      # Try different norms (and match it with what you used in `compmus_chroma`)
+    distance = "angular"   # Try different distance metrics
+  ) |>
+  ggplot(aes(x = time, y = name, fill = d)) + 
+  geom_raster() +
+  scale_fill_viridis_c(guide = "none") +               # Change the colours?
+  labs(x = "Time (s)", y = "Template", fill = NULL) +
+  theme_classic()                                      # Change the theme?
 
-# Ensure dataset exists
-if (!exists("aisc2024") || nrow(aisc2024) == 0) {
-  stop("Error: The dataset 'aisc2024' is not found or empty.")
-}
-
-# Create base ggplot
-p <- ggplot(aisc2024, aes(
-    x = tempo,
-    y = arousal,
-    size = instrumentalness,
-    colour = danceability
-  )) +
-  geom_point(alpha = 0.8) +  
-  geom_rug(linewidth = 0.2, sides = "b") +  
-  scale_x_continuous(limits = c(50, 200), breaks = seq(50, 200, 50)) +
-  scale_y_continuous(limits = c(1, 9), breaks = c(1, 5, 9)) +
-  scale_colour_viridis_c(option = "C") +  
-  scale_size_continuous(trans = "sqrt", guide = "none") +
-  theme_minimal(base_size = 14) +  
-  theme(
-    legend.position = "right",
-    axis.title = element_text(size = 14, face = "bold"),
-    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
-    panel.grid.major = element_line(size = 0.3, linetype = "dashed"),
-    panel.grid.minor = element_blank()
-  ) +
-  labs(
-    title = "Music Characteristics: Tempo vs Arousal",
-    x = "Tempo (BPM)",
-    y = "Arousal Level",
-    colour = "Danceability"
-  )
-
-# Static ggplot2 (with text labels)
-p_static <- p + 
-  geom_text_repel(
-    aes(label = ifelse(tempo > 120 & arousal > 4, "Onda Corta - Sud America", NA)),  
-    size = 4,
-    fontface = "bold",
-    color = "black",
-    nudge_x = 10, 
-    nudge_y = 0.5,
-    box.padding = 0.4,
-    point.padding = 0.4,
-    segment.color = "gray50",
-    max.overlaps = 3  
-  )
-
-# Interactive ggplotly (without text labels)
-p_interactive <- ggplotly(p)
-
-# Render the correct plot
-p_interactive  # This ensures the plot is displayed in Flexdashboard
-
+chrdgrm2
 
 ```
 
+Tempograms {.storyboard}
+=========================================
+
+### Tempograms for the first track
+
+```{r, fig.show="hold", out.width="49%", fig.align="center"}
+"features/aleksandra-b-1.json" |>
+  compmus_tempogram(window_size = 8, hop_size = 1, cyclic = FALSE) |>
+  ggplot(aes(x = time, y = bpm, fill = power)) +
+  geom_raster() +
+  scale_fill_viridis_c(guide = "none") +
+  labs(x = "Time (s)", y = "Tempo (BPM)") +
+  theme_classic()
+```
+```{r, out.width="100%", out.height="60%"}
+"features/aleksandra-b-1.json" |>
+  compmus_tempogram(window_size = 8, hop_size = 1, cyclic = TRUE) |>
+  ggplot(aes(x = time, y = bpm, fill = power)) +
+  geom_raster() +
+  scale_fill_viridis_c(guide = "none") +
+  labs(x = "Time (s)", y = "Tempo (BPM)") +
+  theme_classic()
+
+```
+
+
+### Tempograms for the second track
+```{r, out.width="100%", out.height="60%"}
+"features/aleksandra-b-2.json" |>
+  compmus_tempogram(window_size = 8, hop_size = 1, cyclic = FALSE) |>
+  ggplot(aes(x = time, y = bpm, fill = power)) +
+  geom_raster() +
+  scale_fill_viridis_c(guide = "none") +
+  labs(x = "Time (s)", y = "Tempo (BPM)") +
+  theme_classic()
+
+```
+```{r}
+"features/aleksandra-b-2.json" |>
+  compmus_tempogram(window_size = 8, hop_size = 1, cyclic = TRUE) |>
+  ggplot(aes(x = time, y = bpm, fill = power)) +
+  geom_raster() +
+  scale_fill_viridis_c(guide = "none") +
+  labs(x = "Time (s)", y = "Tempo (BPM)") +
+  theme_classic()
+```
+
+### Novelty Functions: Spectral novelty
+```{r, out.width="100%", out.height="60%"}
+"features/aleksandra-b-1.json" |>
+  compmus_spectral_novelty() |> 
+  ggplot(aes(t, novelty)) +
+  geom_line() +
+  theme_minimal() +
+  labs(x = "Time (s)", y = "Spectral Novelty")
+
+"features/aleksandra-b-2.json" |>
+  compmus_spectral_novelty() |> 
+  ggplot(aes(t, novelty)) +
+  geom_line() +
+  theme_minimal() +
+  labs(x = "Time (s)", y = "Spectral Novelty")
+```
+
+
+### Novelty Functions: Energy novelty
+```{r, out.width="100%", out.height="60%"}
+"features/aleksandra-b-1.json" |>
+  compmus_energy_novelty() |> 
+  ggplot(aes(t, novelty)) +
+  geom_line() +
+  theme_minimal() +
+  labs(x = "Time (s)", y = "Energy Novelty")
+
+"features/aleksandra-b-2.json" |>
+  compmus_energy_novelty() |> 
+  ggplot(aes(t, novelty)) +
+  geom_line() +
+  theme_minimal() +
+  labs(x = "Time (s)", y = "Energy Novelty")
+```
+
+Conclusion {.storyboard}
+=========================================
 ### Conclusion
 
 Songs with a higher tempo (BPM) tend to have a higher arousal level.
