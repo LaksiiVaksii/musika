@@ -14,6 +14,7 @@ library(flexdashboard)
 library(ggplot2)
 library(plotly)
 library(rjson)
+library(RColorBrewer)
 source("compmus.R")
 
 major_chord <-
@@ -101,7 +102,7 @@ Introduction {.storyboard}
 =========================================
 ### Introducing my own tracks
 
-Write text here
+I will structure my portfolio this week, but for now please go to the tempogram section in the menu. Thanks!
 
 ### Here is my class corpus visualisation
 
@@ -157,9 +158,9 @@ Overall, the graph suggests that happier songs tend to be more energetic, and da
 Chromagram {.storyboard}
 =========================================
 
-### Chromagram of my first track
+### Chromagram and cepstogram of my first track
 
-```{r}
+```{r fig.show="hold", out.width="49%", fig.align="center"}
 "features/aleksandra-b-1.json" |>                       # Changed the track to mine
   compmus_chroma(norm = "manhattan") |>                 # Change the norm
   ggplot(aes(x = time, y = pc, fill = value)) + 
@@ -192,15 +193,43 @@ Chromagram {.storyboard}
     panel.grid.major = element_line(color = "gray80", size = 0.3),
     panel.grid.minor = element_blank()
   )
+
+"features/aleksandra-b-1.json" |>                       # Track file
+  compmus_mfccs(norm = "identity") |>                  # MFCC computation
+  ggplot(aes(x = time, y = mfcc, fill = value)) + 
+  geom_raster() +
+  scale_y_continuous(
+    breaks = seq(0, 12, 2),  # More structured y-axis
+    minor_breaks = NULL
+  ) +
+  scale_x_continuous(
+    breaks = seq(0, 200, 50), # More structured x-axis
+    minor_breaks = NULL
+  ) +
+  scale_fill_distiller(palette = "Spectral", direction = 1) + # Better color contrast
+  labs(
+    title = "Cepstrogram of my first track",
+    x = "Time (s)",
+    y = "Coefficient Number",
+    fill = "Intensity"
+  ) +
+  theme_minimal(base_size = 14) +  
+  theme(
+    axis.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    panel.grid.major = element_line(color = "gray80", size = 0.3),
+    panel.grid.minor = element_blank()
+  )                              
 ```
 ------------------------------------------------------------------------
 
 Text 
 
 
-### Chromagram of my second track
+### Chromagram and cepstogram of my second track
 
-```{r}
+```{r fig.show="hold", out.width="49%", fig.align="center"}
 "features/aleksandra-b-2.json" |>                       # Changed the track to mine
   compmus_chroma(norm = "manhattan") |>                 # Change the norm
   ggplot(aes(x = time, y = pc, fill = value)) + 
@@ -233,53 +262,7 @@ Text
     panel.grid.major = element_line(color = "gray80", size = 0.3),
     panel.grid.minor = element_blank()
   )
-```
 
-------------------------------------------------------------------------
-
-Text 
-
-
-### Cepstrogram of my first track
-
-```{r}
-library(RColorBrewer)
-```
-
-```{r, fig.width=14, fig.height=6}
-"features/aleksandra-b-1.json" |>                       # Track file
-  compmus_mfccs(norm = "identity") |>                  # MFCC computation
-  ggplot(aes(x = time, y = mfcc, fill = value)) + 
-  geom_raster() +
-  scale_y_continuous(
-    breaks = seq(0, 12, 2),  # More structured y-axis
-    minor_breaks = NULL
-  ) +
-  scale_x_continuous(
-    breaks = seq(0, 200, 50), # More structured x-axis
-    minor_breaks = NULL
-  ) +
-  scale_fill_distiller(palette = "Spectral", direction = 1) + # Better color contrast
-  labs(
-    title = "Cepstrogram of my first track",
-    x = "Time (s)",
-    y = "Coefficient Number",
-    fill = "Intensity"
-  ) +
-  theme_minimal(base_size = 14) +  
-  theme(
-    axis.title = element_text(size = 14, face = "bold"),
-    axis.text = element_text(size = 12),
-    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
-    panel.grid.major = element_line(color = "gray80", size = 0.3),
-    panel.grid.minor = element_blank()
-  )                              
-```
-
-
-### Cepstrogram of my second track
-
-```{r, fig.width=14, fig.height=6}
 "features/aleksandra-b-2.json" |>                       # Track file
   compmus_mfccs(norm = "identity") |>                  # MFCC computation
   ggplot(aes(x = time, y = mfcc, fill = value)) + 
@@ -308,6 +291,10 @@ library(RColorBrewer)
     panel.grid.minor = element_blank()
   )                              
 ```
+
+------------------------------------------------------------------------
+Text 
+
 
 
 Self-Similarity Matrices {.storyboard}
