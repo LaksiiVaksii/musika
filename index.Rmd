@@ -5,7 +5,7 @@ output:
   flexdashboard::flex_dashboard:
     theme: 
       version: 4
-      bootswatch: darkly
+      bootswatch: litera
 ---
 
 ```{r setup, include=FALSE}
@@ -144,7 +144,15 @@ ggplotly()
 ```
 ------------------------------------------------------------------------
 
-Text.
+This graph shows the relationship between Valence (how happy or positive a song sounds) and Arousal (how energetic a song is). The x-axis represents Valence, and the y-axis represents Arousal.
+
+Each dot on the graph represents a song. The color of the dots shows Danceability, with purple meaning less danceable and*yellow meaning more danceable. Some dots are bigger than others, which could mean those songs are more popular or appear more often.
+
+There is a blue trend line in the graph, showing that as Valence increases (songs sound happier), Arousal also tends to increase (songs have more energy). The gray area around the line shows some uncertainty, meaning not every song follows this trend exactly.
+
+On the sides of the graph, there are small tick marks (rug plots) that show how many songs fall into different Valence and Arousal levels. 
+
+Overall, the graph suggests that happier songs tend to be more energetic, and danceability varies, with some of the most danceable songs appearing in the high-energy, happy range.
 
 Chromagram {.storyboard}
 =========================================
@@ -226,6 +234,7 @@ Text
     panel.grid.minor = element_blank()
   )
 ```
+
 ------------------------------------------------------------------------
 
 Text 
@@ -528,7 +537,7 @@ Tempograms {.storyboard}
 
 ### Tempograms for the first track
 
-```{r, fig.show="hold", out.width="49%", fig.align="center"}
+```{r fig.show="hold", out.width="49%", fig.align="center"}
 "features/aleksandra-b-1.json" |>
   compmus_tempogram(window_size = 8, hop_size = 1, cyclic = FALSE) |>
   ggplot(aes(x = time, y = bpm, fill = power)) +
@@ -536,8 +545,7 @@ Tempograms {.storyboard}
   scale_fill_viridis_c(guide = "none") +
   labs(x = "Time (s)", y = "Tempo (BPM)") +
   theme_classic()
-```
-```{r, out.width="100%", out.height="60%"}
+
 "features/aleksandra-b-1.json" |>
   compmus_tempogram(window_size = 8, hop_size = 1, cyclic = TRUE) |>
   ggplot(aes(x = time, y = bpm, fill = power)) +
@@ -545,12 +553,11 @@ Tempograms {.storyboard}
   scale_fill_viridis_c(guide = "none") +
   labs(x = "Time (s)", y = "Tempo (BPM)") +
   theme_classic()
-
 ```
 
 
 ### Tempograms for the second track
-```{r, out.width="100%", out.height="60%"}
+```{r fig.show="hold", out.width="49%", fig.align="center"}
 "features/aleksandra-b-2.json" |>
   compmus_tempogram(window_size = 8, hop_size = 1, cyclic = FALSE) |>
   ggplot(aes(x = time, y = bpm, fill = power)) +
@@ -559,8 +566,6 @@ Tempograms {.storyboard}
   labs(x = "Time (s)", y = "Tempo (BPM)") +
   theme_classic()
 
-```
-```{r}
 "features/aleksandra-b-2.json" |>
   compmus_tempogram(window_size = 8, hop_size = 1, cyclic = TRUE) |>
   ggplot(aes(x = time, y = bpm, fill = power)) +
@@ -571,7 +576,7 @@ Tempograms {.storyboard}
 ```
 
 ### Novelty Functions: Spectral novelty
-```{r, out.width="100%", out.height="60%"}
+```{r fig.show="hold", out.width="49%", fig.align="center"}
 "features/aleksandra-b-1.json" |>
   compmus_spectral_novelty() |> 
   ggplot(aes(t, novelty)) +
@@ -589,7 +594,7 @@ Tempograms {.storyboard}
 
 
 ### Novelty Functions: Energy novelty
-```{r, out.width="100%", out.height="60%"}
+```{r fig.show="hold", out.width="49%", fig.align="center"}
 "features/aleksandra-b-1.json" |>
   compmus_energy_novelty() |> 
   ggplot(aes(t, novelty)) +
