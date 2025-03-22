@@ -129,43 +129,55 @@ Introduction - Class Corpus {.storyboard}
 
 I will structure my portfolio this week, but for now please go to the tempogram section in the menu. Thanks!
 
-### Here is my class corpus visualisation
+### Class Corpus Visualization
 
 ```{r}
+library(readr)
+library(ggplot2)
+library(plotly)
+library(viridis)
+
 compmus2025 <- read_csv("C:\\Users\\aneru\\musika2\\compmus2025.csv")
-compmus2025 |>                   # Start with the data
-  ggplot(                     # Set up the plot.
+
+# Build the ggplot object
+p <- compmus2025 |>
+  ggplot(
     aes(
       x = valence,
       y = arousal,
       colour = danceability
     )
   ) +
-  geom_point() +  # Scatter plot.
-  geom_smooth() +
-  geom_rug(linewidth = 0.1) + # Add 'fringes' to show data distribution.
-    scale_x_continuous(         # Fine-tune the x axis.
-    limits = c(3, 6.5),
-    breaks = c(3, 4, 5, 6, 7), # Specify grid lines
-    minor_breaks = NULL       # Remove 'minor' grid lines.
+  geom_point(size = 2.5, alpha = 0.8) +  # Adjust size & transparency
+  geom_smooth(method = "loess", se = FALSE, linewidth = 1, colour = "gray30") +  # Clean smooth
+  geom_rug(linewidth = 0.2, alpha = 0.5) +  # Add data distribution markers
+  scale_x_continuous(
+    limits = c(3, 5),
+    breaks = c(3, 4, 5, 6, 7),
+    minor_breaks = NULL
   ) +
-  scale_y_continuous(         # Fine-tune the y axis in the same way.
-    limits = c(3, 8),
+  scale_y_continuous(
+    limits = c(3, 6),
     breaks = c(3, 4, 5, 6, 7, 8),
     minor_breaks = NULL
   ) +
-  scale_colour_viridis_c() +  # Use the popular viridis colour palette.
-  scale_size_continuous(      # Fine-tune the sizes of each point.
-    trans = "exp",            # Use an exp transformation to emphasise loud..
-    guide = "none"            # Remove the legend for size.
-  ) +
-  theme_light() +             # Use a simpler theme.
-  labs(                       # Make the titles nice.
+  scale_colour_viridis_c(option = "turbo") +  # More colorful variant
+  theme_light(base_size = 14) +
+  labs(
+    title = "Valence vs. Arousal",
+    subtitle = "Colored by Danceability",
     x = "Valence",
     y = "Arousal",
     colour = "Danceability"
+  ) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
   )
-ggplotly()
+
+# Make it interactive
+ggplotly(p)
+
 ```
 ------------------------------------------------------------------------
 
@@ -205,15 +217,59 @@ compmus_dist |>
   dendro_data() |>
   ggdendrogram()
 ```
-### Heatmap
+### Full Class Corpus Heatmap
 
 ```{r}
+# Show every 8th row name only
+row_labels <- rownames(cluster_juice)
+custom_row_labels <- ifelse(seq_along(row_labels) %% 8 == 1, row_labels, "")
+
+# Clean and readable heatmap
 heatmaply(
   cluster_juice,
-  hclustfun = hclust,
-  hclust_method = "average",  # Change for single, average, or complete linkage.
-  dist_method = "euclidean"
+  dist_method = "euclidean",
+  hclust_method = "average",
+  k_col = 4,
+  k_row = 4,
+  plot_method = "plotly"
 )
+```
+
+### My Tracks in Classcorpus Heatmap
+```{r}
+# Ensure reproducibility
+set.seed(123)
+
+# Define rows to include
+highlight_names <- c("aleksandra-b-1", "aleksandra-b-2")
+all_rows <- rownames(cluster_juice)
+
+# Filter to keep those two
+mandatory_rows <- all_rows[tolower(all_rows) %in% tolower(highlight_names)]
+
+# Sample 8 more rows randomly (excluding the highlighted ones)
+remaining_rows <- setdiff(all_rows, mandatory_rows)
+random_rows <- sample(remaining_rows, size = 8)
+
+# Combine into final subset
+selected_rows <- c(mandatory_rows, random_rows)
+subset_data <- cluster_juice[selected_rows, ]
+
+# Plot the heatmap
+heatmaply(
+  subset_data,
+  dist_method = "euclidean",
+  hclust_method = "average",
+  k_col = 2,  # fewer clusters since we have fewer rows
+  k_row = 2,
+  plot_method = "plotly",
+  row_text_angle = 0,
+  column_text_angle = 45,
+  fontsize_row = 12,
+  fontsize_col = 12,
+  margins = c(80, 150)
+)
+
 ```
 
 ```{r}
@@ -251,15 +307,33 @@ classification_knn <-
   add_model(knn_model) |> 
   fit_resamples(compmus_cv, control = control_resamples(save_pred = TRUE))
 ```
-```{r}
-classification_knn |> get_conf_mat()
-```
 
 ### k-Nearest Neighbour
 ```{r}
-classification_knn |> get_conf_mat() |> autoplot(type = "heatmap")
+classification_knn |>
+  get_conf_mat() |>
+  autoplot(type = "heatmap") +
+  scale_fill_gradient2(
+    low = "#00bfc4",  # Teal
+    mid = "white",
+    high = "#f8766d", # Orange-red
+    midpoint = 25,
+    name = "Count"
+  ) +
+  labs(
+    title = "Confusion Matrix - Custom Colors",
+    x = "Predicted Class",
+    y = "True Class"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid = element_blank()
+  )
+
 ```
 ### Random Forests
+
 ```{r}
 forest_model <-
   rand_forest() |>
@@ -325,6 +399,7 @@ Chromograms and cepstpgrams {.storyboard}
     panel.grid.minor = element_blank()
   )
 ```
+
 ### Chromagram of my second track
 ```{r fig.show="hold", out.width="49%", fig.align="center"}
 "features/aleksandra-b-2.json" |>                       # Changed the track to mine
@@ -360,6 +435,7 @@ Chromograms and cepstpgrams {.storyboard}
     panel.grid.minor = element_blank()
   )
 ```
+
 ### Cepstogram of my first track
 ```{r}
 "features/aleksandra-b-1.json" |>                       # Track file
@@ -390,6 +466,7 @@ Chromograms and cepstpgrams {.storyboard}
     panel.grid.minor = element_blank()
   )          
 ```
+
 ### Cepstogram of my second track
 ```{r}
 
@@ -421,7 +498,6 @@ Chromograms and cepstpgrams {.storyboard}
     panel.grid.minor = element_blank()
   ) 
 ```
-
 
 
 Self-Similarity Matrices {.storyboard}
@@ -610,9 +686,9 @@ ggplot(similarity_matrix, aes(x = xtime, y = ytime, fill = d)) +
 
 Chordogram and Keygram {.storyboard}
 =========================================
-### Chordagrams
+### Chordagram
 
-```{r, fig.width=14, fig.height=7}
+```{r}
 
 chrdgrm1 <- "features/aleksandra-b-1.json" |> 
   compmus_chroma(norm = "manhattan") |> 
@@ -629,6 +705,11 @@ chrdgrm1 <- "features/aleksandra-b-1.json" |>
 
 chrdgrm1
 
+```
+
+### Keygram
+
+```{r}
 chrdgrm2 <- "features/aleksandra-b-2.json" |> 
   compmus_chroma(norm = "euclidean") |> 
   compmus_match_pitch_templates(
@@ -643,15 +724,15 @@ chrdgrm2 <- "features/aleksandra-b-2.json" |>
   theme_classic()                                      # Change the theme?
 
 chrdgrm2
-
 ```
+
 
 Tempograms {.storyboard}
 =========================================
 
 ### Tempogram for the first track (cyclic=FALSE)
 
-```{r fig.show="hold", out.width="49%", fig.align="left"}
+```{r}
 "features/aleksandra-b-1.json" |>
   compmus_tempogram(window_size = 8, hop_size = 1, cyclic = FALSE) |>
   ggplot(aes(x = time, y = bpm, fill = power)) +
@@ -666,7 +747,7 @@ The tempograms for my track give some interesting results. The song is an electr
 
 ### Tempogram for the first track (cyclic=TRUE)
 
-```{r fig.show="hold", out.width="49%", fig.align="left"}
+```{r}
 "features/aleksandra-b-1.json" |>
   compmus_tempogram(window_size = 8, hop_size = 1, cyclic = TRUE) |>
   ggplot(aes(x = time, y = bpm, fill = power)) +
@@ -681,7 +762,7 @@ The second graph, made with `cyclic = TRUE`, looks much more stable. Instead of 
 In overall, While the first graph captures more rhythmic complexity, the second one highlights the main tempo more clearly.
 
 ### Tempogram for the second track (cyclic =FALSE)
-```{r fig.show="hold", out.width="49%", fig.align="left"}
+```{r}
 "features/aleksandra-b-2.json" |>
   compmus_tempogram(window_size = 8, hop_size = 1, cyclic = FALSE) |>
   ggplot(aes(x = time, y = bpm, fill = power)) +
@@ -696,7 +777,7 @@ The next two graphs show the tempo analysis of a track generated by an AI. Even 
 The second graph looks more structured, showing a dominant tempo around 100 BPM with some fluctuations. This suggests that despite the track's complexity, there is a stable underlying beat. The sudden dip in tempo around the middle of the graph indicates a programmed slowdown. Unlike human-composed music, where tempo variations often come from expressive timing, these shifts in an AI-generated track might be a result of algorithmic decisions or transitions between different generated patterns. The first graph highlights the intricate rhythmic elements, while the second one focuses on the main tempo, showing how AI-generated music balances complexity with an overall structured beat.
 
 ### Tempogram for the second track (cyclic =TRUE)
-```{r fig.show="hold", out.width="49%", fig.align="left"}
+```{r}
 "features/aleksandra-b-2.json" |>
   compmus_tempogram(window_size = 8, hop_size = 1, cyclic = TRUE) |>
   ggplot(aes(x = time, y = bpm, fill = power)) +
@@ -710,7 +791,8 @@ The second graph looks more structured, showing a dominant tempo around 100 BPM 
 The second graph looks more structured, showing a dominant tempo around 100 BPM with some fluctuations. This suggests that despite the track's complexity, there is a stable underlying beat. The sudden dip in tempo around the middle of the graph indicates a programmed slowdown. Unlike human-composed music, where tempo variations often come from expressive timing, these shifts in an AI-generated track might be a result of algorithmic decisions or transitions between different generated patterns. The first graph highlights the intricate rhythmic elements, while the second one focuses on the main tempo, showing how AI-generated music balances complexity with an overall structured beat.
 
 ### Novelty Functions: Spectral novelty for the 1st track
-```{r fig.show="hold", out.width="49%", fig.align="center"}
+
+```{r}
 "features/aleksandra-b-1.json" |>
   compmus_spectral_novelty() |> 
   ggplot(aes(t, novelty)) +
@@ -718,8 +800,10 @@ The second graph looks more structured, showing a dominant tempo around 100 BPM 
   theme_minimal() +
   labs(x = "Time (s)", y = "Spectral Novelty")
 ```
+
 ### Novelty Functions: Spectral novelty for the 2nd track
-```{r fig.show="hold", out.width="49%", fig.align="center"}
+
+```{r}
 "features/aleksandra-b-2.json" |>
   compmus_spectral_novelty() |> 
   ggplot(aes(t, novelty)) +
@@ -729,7 +813,8 @@ The second graph looks more structured, showing a dominant tempo around 100 BPM 
 ```
 
 ### Novelty Functions: Energy novelty for the 1st track
-```{r fig.show="hold", out.width="49%", fig.align="center"}
+
+```{r}
 "features/aleksandra-b-1.json" |>
   compmus_energy_novelty() |> 
   ggplot(aes(t, novelty)) +
@@ -739,7 +824,8 @@ The second graph looks more structured, showing a dominant tempo around 100 BPM 
 ```
 
 ### Novelty Functions: Energy novelty for the 2nd track
-```{r fig.show="hold", out.width="49%", fig.align="center"}
+
+```{r}
 "features/aleksandra-b-2.json" |>
   compmus_energy_novelty() |> 
   ggplot(aes(t, novelty)) +
@@ -747,6 +833,7 @@ The second graph looks more structured, showing a dominant tempo around 100 BPM 
   theme_minimal() +
   labs(x = "Time (s)", y = "Energy Novelty")
 ```
+
 Conclusion {.storyboard}
 =========================================
 ### Conclusion
