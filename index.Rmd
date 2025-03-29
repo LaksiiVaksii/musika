@@ -126,11 +126,32 @@ get_pr <- function(fit) {
 Introduction - Class Corpus {.storyboard}
 =========================================
 ### Introducing my own tracks
+Dear reader,
+Welcome to my musicology GitHub page! In the next tab, you'll find visualisations of the class corpus, along with detailed analyses of two tracks—one of which was created using AI.
 
-I will structure my portfolio this week, but for now please go to the tempogram section in the menu. Thanks!
+For this portfolio, I composed one track with the help of generative AI. Can you guess which one?
+The second track was sourced from SoundCloud’s open library. While I assume it was human-made, I can’t say for sure—it might also be AI-generated. Hopefully, the analysis that follows will help shed some light on whether it was made by a human, or perhaps a collaboration between human and machine.
+
+As for my AI-generated track, here’s the prompt I used (I’d like to think it’s pretty creative):
+
+"Create a 2-minute 30-second high-energy music track inspired by anime battle scenes. Blend intense orchestral elements with modern electronic sounds, including powerful synths, bass drops, and driving percussion. Take inspiration from epic anime moments and Tchaikovsky’s dynamic compositions, ensuring fluid transitions between suspenseful buildups and explosive, adrenaline-filled peaks. Deliver a dramatic, fast-paced sound with depth, combining classical grandeur with contemporary electronic intensity."
+
+
+My first song
+
+cat('<audio controls>
+<source src=""C:\Users\aneru\musika2\Aleksandra_B-1.mp3.mp3"" type="audio/mpeg">
+Your browser does not support the audio element.
+</audio>')
+
+My second song
+
+cat('<audio controls>
+<source src=""C:\Users\aneru\musika2\Aleksandra_B-2.mp3.mp3"" type="audio/mpeg">
+Your browser does not support the audio element.
+</audio>')
 
 ### Class Corpus Visualization
-
 ```{r}
 library(readr)
 library(ggplot2)
@@ -180,12 +201,11 @@ ggplotly(p)
 
 ```
 ------------------------------------------------------------------------
-
 This graph shows the relationship between Valence (how happy or positive a song sounds) and Arousal (how energetic a song is). The x-axis represents Valence, and the y-axis represents Arousal.
 
 Each dot on the graph represents a song. The color of the dots shows Danceability, with purple meaning less danceable and*yellow meaning more danceable. Some dots are bigger than others, which could mean those songs are more popular or appear more often.
 
-There is a blue trend line in the graph, showing that as Valence increases (songs sound happier), Arousal also tends to increase (songs have more energy). The gray area around the line shows some uncertainty, meaning not every song follows this trend exactly.
+There is a grey trend line in the graph, showing that as Valence increases (songs sound happier), Arousal also tends to increase (songs have more energy). The gray area around the line shows some uncertainty, meaning not every song follows this trend exactly.
 
 On the sides of the graph, there are small tick marks (rug plots) that show how many songs fall into different Valence and Arousal levels. 
 
@@ -217,6 +237,8 @@ compmus_dist |>
   dendro_data() |>
   ggdendrogram()
 ```
+
+
 ### Full Class Corpus Heatmap
 
 ```{r}
@@ -234,6 +256,10 @@ heatmaply(
   plot_method = "plotly"
 )
 ```
+------------------------------------------------------------------------
+The dendrogram heatmap shows the result of clustering class corpus tracks based on their musical features: **valence**, **arousal**, **danceability**, **instrumentalness**, and **tempo**. Since each student uploaded two tracks, the dataset is quite large, and as a result, the track names often overlap on the graph, making them hard to read. In this section, I’ll focus on some general observations from the “big picture”, while in another tab you can see my specific tracks and where they are shown in the context of 10 randomly selected tracks.
+
+In this heatmap, we can see that tracks with similar musical characteristics are grouped close to each other. For example, tracks with high arousal and valence (highlighted in yellow) are clustered in one area of the dendrogram, while tracks with high instrumentalness and low danceability (shown in darker shades) form different clusters. It's interesting that the two tracks submitted by the same person are often located next to each other. I think this might be because many of us used generative AI to create our tracks, and the AI tends to follow similar patterns, which makes the songs sound alike—even with different inputs.
 
 ### My Tracks in Classcorpus Heatmap
 ```{r}
@@ -271,6 +297,8 @@ heatmaply(
 )
 
 ```
+-----------------------------------------------------------------------
+Here is the smaller heatmap, where I included my two tracks (**aleksandra-b-1** and **aleksandra-b-2**) along with 10 random others. My tracks are placed close together, which makes sense since they’re both electronic. The first one was taken from SoundCloud, and the second was created with generative AI. Even though the first track is human-made, it still shows some typical AI-like qualities, which is noticeable in the heatmap. Both tracks have **low instrumentalness** and **high arousal/valence**, which likely explains why they ended up in the same cluster.
 
 ```{r}
 compmus2025_filtered <- 
@@ -321,7 +349,7 @@ classification_knn |>
     name = "Count"
   ) +
   labs(
-    title = "Confusion Matrix - Custom Colors",
+    title = "Confusion Matrix",
     x = "Predicted Class",
     y = "True Class"
   ) +
@@ -332,23 +360,17 @@ classification_knn |>
   )
 
 ```
-### Random Forests
+-----------------------------------------------------------------------
+This confusion matrix shows how well the model did in telling apart AI-generated tracks from Non-AI ones in the class corpus.
 
-```{r}
-forest_model <-
-  rand_forest() |>
-  set_mode("classification") |> 
-  set_engine("ranger", importance = "impurity")
-indie_forest <- 
-  workflow() |> 
-  add_recipe(classification_recipe) |> 
-  add_model(forest_model) |> 
-  fit_resamples(
-    compmus_cv, 
-    control = control_resamples(save_pred = TRUE)
-  )
-indie_forest |> get_pr()
-```
+- It correctly identified **37 AI tracks** as AI.  
+- It got **21 AI tracks wrong**, calling them Non-AI.  
+- It correctly identified **20 Non-AI tracks**.  
+- But it also **mistook 12 Non-AI tracks** for AI.
+
+So overall, the model is pretty good at spotting AI tracks but still makes some mistakes. It sometimes thinks human-made music is AI and sometimes misses AI tracks that sound more natural. This shows that some AI tracks can be very close to real ones, making them harder to tell apart.
+
+### Random Forests
 ```{r}
 compmus2025_filtered |>
   ggplot(aes(x = valence, y = arousal, colour = ai, size = tempo)) +
@@ -361,6 +383,13 @@ compmus2025_filtered |>
     colour = "AI"
   )
 ```
+-----------------------------------------------------------------------
+This is the final graph in my class corpus section. It shows all the tracks plotted by **valence** and **arousal**, with **tempo** shown by the size of the dots. AI-generated tracks are in purple, and Non-AI tracks are in yellow.
+
+We can see that AI and Non-AI tracks are quite mixed, which matches what we saw earlier in the confusion matrix — the model had trouble separating them clearly. Still, AI tracks seem to lean a bit more toward the top right (higher arousal and valence), while Non-AI tracks are more spread out. Tempo doesn't seem to be a clear difference, since both AI and Non-AI tracks have a mix of slow and fast songs.
+
+Overall, this graph helps to confirm that even though there are some patterns, AI and Non-AI tracks often look similar in terms of these features. 
+
 
 Chromograms and cepstpgrams {.storyboard}
 =========================================
@@ -708,7 +737,6 @@ chrdgrm1
 ```
 
 ### Keygram
-
 ```{r}
 chrdgrm2 <- "features/aleksandra-b-2.json" |> 
   compmus_chroma(norm = "euclidean") |> 
@@ -731,7 +759,6 @@ Tempograms {.storyboard}
 =========================================
 
 ### Tempogram for the first track (cyclic=FALSE)
-
 ```{r}
 "features/aleksandra-b-1.json" |>
   compmus_tempogram(window_size = 8, hop_size = 1, cyclic = FALSE) |>
@@ -746,7 +773,6 @@ Tempograms {.storyboard}
 The tempograms for my track give some interesting results. The song is an electronic track I fpund on SoundCloud, so I do not know the original data behind it uch as tempo or other elemetns. However, due to the genre of the song, I expected it to have a steady tempo. The first graph was generated with `cyclic = FALSE`, which means it tries to capture all tempo variations separately. This leads to multiple horizontal lines, likely caused by rhythmic layers or subdivisions in the beat. Since the track has strong percussive elements and a lot of repetitive structures, these extra tempo lines are picking up on drum patterns or other rhythmic elements overlapping with the main beat. 
 
 ### Tempogram for the first track (cyclic=TRUE)
-
 ```{r}
 "features/aleksandra-b-1.json" |>
   compmus_tempogram(window_size = 8, hop_size = 1, cyclic = TRUE) |>
