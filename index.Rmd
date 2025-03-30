@@ -149,7 +149,8 @@ As for my AI-generated track, here’s the prompt I used (I think it turned out 
 *Create a 2-minute 30-second high-energy music track inspired by anime battle scenes. Blend intense orchestral elements with modern electronic sounds, including powerful synths, bass drops, and driving percussion. Take inspiration from epic anime moments and Tchaikovsky’s dynamic compositions, ensuring fluid transitions between suspenseful buildups and explosive, adrenaline-filled peaks. Deliver a dramatic, fast-paced sound with depth, combining classical grandeur with contemporary electronic intensity.*
 
 
-My tracks
+My tracks (it might be written that you do not have access to it since it is google drive, but choose open the document - the access is given. Inserting audio here did not work for me, so I came up with this method instead)
+
 ```{=html}
 
 <iframe style="border-radius:12px" src="https://drive.google.com/file/d/1Wf9LaqRy12SFJ66BRiyCZD91vr23GfYu/view?usp=drive_link" width="100%" height="160" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" data-external="1"></iframe>
@@ -722,7 +723,7 @@ cat("</div>")
 
 Chordogram {.storyboard}
 =========================================
-### Chordagram
+### Chordagrams
 ```{r chordogram_plots, echo=FALSE, results='asis'}
 plot_first_chords <- "features/aleksandra-b-1.json" |>
   compmus_chroma(norm = "identity") |>
@@ -984,12 +985,14 @@ cat("</div>")
 Conclusion {.storyboard}
 =========================================
 ### Conclusion
+Working on this portfolio gave me a clearer idea of how AI-generated music compares to music made by a human. Using tools like chromagrams, tempograms, cepstrograms, novelty functions, and self-similarity matrices, I started to see the differences between my two tracks. My AI-generated track turned out to be pretty repetitive and followed a predictable structure, while the track I found on SoundCloud had smoother transitions, more variation, and felt like it evolved more naturally over time — probably because it was made by a human.
 
-Working on this portfolio helped me understand the differences between a human-made and an AI-generated track by using various computational musicology tools. Through visual analyses like chromagrams, tempograms, cepstrograms, novelty functions, and self-similarity matrices, I was able to notice contrasts. For instance, my AI-generated track was much more repetitive and predictable, while the human-made one had smoother transitions, more variation, and a more natural sense of musical development.
+When I looked at the energy and spectral novelty plots, it became obvious that the SoundCloud track was more dynamic. It had more ups and downs throughout, which suggests shifts in rhythm, intensity, or sections. The AI track, on the other hand, started with a lot of variation but then quickly settled into loops that stayed the same for a while. I saw the same kind of pattern in the self-similarity matrices — the AI track had clear repeating blocks, while the human-made one was more textured and less predictable.
 
-However, I also realized that a lot depends on the person’s musical background. AS for me, I don’t have any music theory or programming background, so creating a musically interesting AI track was quite challenging. I think with more knowledge of harmony or structure, I could have guided the AI to make something better. So in a way, this project showed me how generative tools still rely heavily on human input and basic knowledge.
+What surprised me was that both of my tracks ended up pretty close to each other in the clustering and heatmap analysis. I think that’s because they’re both electronic tracks and have similar values for features like valence, arousal, and instrumentalness. So, even though they might look similar based on those features, a closer look shows they’re quite different when it comes to structure and development.
 
-In the 'programming section', I explored clustering and classification using models like KNN and random forests. It was interesting to understand how features like instrumentalness, arousal, and danceability helped distinguish AI and non-AI tracks. My AI track appeared in clusters with other AI-generated songs, which probably reflects how many of us used similar tools and prompts—so the output ends up sounding similar, even unintentionally. 
+In the machine learning part, I tried out models like KNN and random forests to see if it’s possible to automatically tell if a song was made by AI. Turns out, things like instrumentalness, arousal, and danceability were the most helpful for this. My AI track was grouped with other AI-made ones quite a few times, which makes sense — a lot of us probably used similar tools or prompts, so our tracks ended up sounding somewhat alike.
 
-Overall, I really enjoyed the process. Even though sometimes it waas really tough without musical understanding.
+This project also made me reflect on my own limitations. I don’t have a background in music theory or programming, so creating a good AI track was tough. I think if I understood things like harmony or musical structure better, I could’ve guided the AI to make something more interesting. So even though AI can generate music, the outcome still really depends on the person behind the prompt.
 
+Overall, I had a lot of fun with this. Even though I definitely struggled multiple times, but I also learned a lot about how data, design, and music can come together in cool and unexpected ways.
