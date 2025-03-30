@@ -149,25 +149,12 @@ As for my AI-generated track, here’s the prompt I used (I think it turned out 
 *Create a 2-minute 30-second high-energy music track inspired by anime battle scenes. Blend intense orchestral elements with modern electronic sounds, including powerful synths, bass drops, and driving percussion. Take inspiration from epic anime moments and Tchaikovsky’s dynamic compositions, ensuring fluid transitions between suspenseful buildups and explosive, adrenaline-filled peaks. Deliver a dramatic, fast-paced sound with depth, combining classical grandeur with contemporary electronic intensity.*
 
 
-My first track
-```{r, echo=FALSE, results='asis'}
-cat('
-<audio controls>
-  <source src="aleksandra-b-1.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
-')
-```
+My tracks
+```{=html}
 
-My second track
-```{r, echo=FALSE, results='asis'}
-cat('
-<audio controls>
-  <source src="aleksandra-b-2.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
-')
+<iframe style="border-radius:12px" src="https://drive.google.com/file/d/1Wf9LaqRy12SFJ66BRiyCZD91vr23GfYu/view?usp=drive_link" width="100%" height="160" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" data-external="1"></iframe>
 
+<iframe style="border-radius:12px" src="https://drive.google.com/file/d/1JTKeVuyFC3kppAtkzoHiGC10VklFCU7J/view?usp=drive_link" width="100%" height="160" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" data-external="1"></iframe>
 ```
 
 The Corpus {.storyboard}
