@@ -209,11 +209,9 @@ p <- compmus2025 |>
 p
 ```
 ***
-This graph shows the relationship between **Valence** (how happy or positive a song sounds) and **Arousal** (how energetic a song is). The x-axis represents Valence, and the y-axis represents Arousal.
+This graph shows the relationship between **Valence** *(how happy or positive a song sounds)* and **Arousal** *(how energetic a song is)*. The x-axis represents Valence, and the y-axis represents Arousal.
 
-Each dot on the graph represents a song. The color of the dots shows **Danceability**, with purple meaning less danceable and yellow meaning more danceable.There is also a grey trend line in the graph, showing that as Valence increases, Arousal also tends to increase. So in other words, when song sounds happier, it also has more energy. However, the gray area around the line shows some uncertainty, meaning not every song follows this trend exactly.
-
-On the sides of the graph, there are small tick marks (rug plots) that show how many songs fall into different Valence and Arousal levels. 
+Each dot on the graph represents a song. The color of the dots shows **Danceability**, with purple meaning less danceable and yellow meaning more danceable. There is also a grey trend line in the graph, showing that as Valence increases, Arousal also tends to increase. So in other words, **when song sounds happier, it also has more energy**. On the sides of the graph, there are small tick marks (rug plots) that show how many songs fall into different Valence and Arousal levels. 
 
 Overall, the graph suggests that happier songs tend to be more energetic, and danceability varies, with some of the most danceable songs appearing in the high-energy, happy range.
 
@@ -245,9 +243,9 @@ dendro_plot <- compmus_dist |>
 ggsave("dendrogram.png", dendro_plot, width = 12, height = 10)
 
 text_dendrogram <- "
-This plot shows how the songs are grouped based on how similar they are. Songs that are more alike are joined together lower in the tree. Songs that are more different connect higher up. 
+This plot shows how the tracks are grouped based on how similar they are. Tracks that are more alike are joined together lower in the tree. Tracks that are more different connect higher up. 
 
-Even though the names at the bottom are hard to read, we can still see that some songs form small, tight groups, while others belong to larger clusters. This suggests that certain tracks in the dataset are very similar to each other, while some stand out as more unique. I think this could be related to the use of AI. Since most of us aren’t professional AI music creators, the results we produce might end up sounding quite similar. This dendrogram especially highlights how some of these AI-generated tracks tend to cluster together.
+Even though the names at the bottom are hard to read, we can still see that some tracks form small, tight groups, while others belong to larger clusters. This suggests that **certain tracks in the dataset are very similar to each other**, while some stand out as more unique. I think this could be related to the use of AI. Since most of us aren’t professional AI music creators, the results we produce might end up sounding quite similar. This dendrogram especially highlights how some of these AI-generated tracks tend to cluster together.
 "
 
 cat("<div style='display: flex; flex-direction: row;'>")
@@ -277,7 +275,7 @@ heatmaply(
 ***
 The dendrogram heatmap shows the result of clustering class corpus tracks based on their musical features: **valence**, **arousal**, **danceability**, **instrumentalness**, and **tempo**. Since each student uploaded two tracks, the dataset is quite large, and as a result, the track names often overlap on the graph, making them hard to read. In this section, I’ll focus on some general observations from the “big picture”, while in another tab you can see my specific tracks and where they are shown in the context of 10 randomly selected tracks.
 
-In this heatmap, we can see that tracks with similar musical characteristics are grouped close to each other. For example, tracks with high arousal and valence (highlighted in yellow) are clustered in one area of the dendrogram, while tracks with high instrumentalness and low danceability (shown in darker shades) form different clusters. It's interesting that the two tracks submitted by the same person are often located next to each other. I think this might be because many of us used generative AI to create our tracks, and the AI tends to follow similar patterns, which makes the songs sound alike—even with different inputs.
+In this heatmap, we can see that tracks with similar musical characteristics are grouped close to each other. For example, tracks with high arousal and valence (highlighted in yellow) are clustered in one area of the dendrogram, while tracks with high instrumentalness and low danceability (shown in darker shades) form different clusters. It's interesting that the **two tracks submitted by the same person are often located next to each other**. I think this might be because many of us used generative AI to create our tracks, and the AI tends to follow similar patterns, which makes the songs sound alike—even with different inputs.
 
 ### My Tracks In Class Corpus Heatmap
 ```{r}
@@ -330,7 +328,7 @@ compmus2025_filtered <- compmus2025 %>%
   dplyr::mutate(ai = factor(dplyr::if_else(ai, "AI", "Non-AI")))
 
 # Create the explanation text
-explanation_text <- "This scatterplot shows how AI-made and human-made tracks compare based on valence and arousal. Yellow dots are human-made, and purple ones are AI-made. The size of each dot shows the tempo of the song. From the graph, we can see that both types of tracks are spread out across the whole space. Overall, AI-generated tracks seem quite similar to human ones in terms of mood and energy. Also we have approximately 50/50 for AI generated and Human-made tracks."
+explanation_text <- "This scatterplot shows how AI-made and human-made tracks compare based on valence and arousal. Yellow dots are human-made, and purple ones are AI-made. The size of each dot shows the tempo of the song. From the graph, we can see that both types of tracks are spread out across the whole space. Overall, **AI-generated tracks seem quite similar to human ones in terms of mood and energy**. Also we have approximately 50/50 for AI generated and Human-made tracks."
 
 # Create the plot
 p <- compmus2025_filtered |>
@@ -396,7 +394,7 @@ conf_plot <- classification_knn |>
 ggsave("knn_confusion_matrix.png", conf_plot, width = 10, height = 8)
 
 text_output_knn <- "
-This confusion matrix visualizes how well the k-nearest neighbors model distinguishes between AI-generated and human-made tracks. The majority of AI tracks were predicted correctly, as shown in the top-left cell, while the model also correctly identified a portion of Non-AI tracks. However, there is a noticeable number of errors: some AI tracks were misclassified as human-made and vice versa. In overall, the results show that the model can tell the difference between AI and Non-AI tracks to some extent, but it still makes mistakes. It does a better job predicting AI tracks, but has more trouble correctly identifying the Non-AI ones.
+This confusion matrix visualizes how well the k-nearest neighbors model distinguishes between AI-generated and human-made tracks. The majority of AI tracks were **predicted correctly**, as shown in the top-left cell, while the model also correctly identified a portion of Non-AI tracks. However, there is a noticeable number of errors: some AI tracks were misclassified as human-made and vice versa. In overall, the results show that **the model can tell the difference between AI and Non-AI tracks to some extent, but it still makes mistakes**. It does a better job predicting AI tracks, but has more trouble correctly identifying the Non-AI ones. Maybe a better training can upgrade the model in the future.
 "
 
 # Random Forest model
@@ -445,7 +443,7 @@ cat(paste0("<div style='flex: 1; padding-left: 40px;'>", text_output_forest, "</
 cat("</div>")
 ```
 ### Summary
-This section looked at all the songs in the class dataset. The scatterplot shows that happier songs usually have more energy, and more danceable tracks often fall into that category too. For our class, the overall mood seems chill or balanced, since most of the songs fall between valence 3.5 and 4.5.
+This section looked at all the songs in the class dataset. The scatterplot shows that happier songs usually have more energy, and more danceable tracks often fall into that category too. For our class, **the overall mood seems chill or balanced**, since most of the songs fall between valence 3.5 and 4.5.
 
 The dendrogram and heatmaps also show that some songs are very similar, especially the AI-generated ones. This might be because many of us used similar tools or prompts when creating music with AI.
 
@@ -526,7 +524,7 @@ ggsave("second_chroma.png", plot_second_chroma, width = 10, height = 8)
 
 
 text_output_chroma <- "
-The chromagram of my first track (from SoundCloud) shows that the notes **D**, **G**, and **A** appear frequently throughout the song. These notes often go together in the key of D major, so it’s likely that the track is based in that key. Their regular appearance also suggests that the track has a stable and repeating structure. If you listen to it, it sounds like a classic game soundtrack, with energetic beats that feel similar to what you'd hear in an anime-style video game (Persona 5 comes to mind as a perfect match). However, since the track is probably some kind of mashup, the harmony shifts later on. Around the 2-minute mark, the note F becomes more prominent, indicating a change in the musical idea. Even though the core sounds stay the same, the pattern in which they’re played changes noticeably.
+The chromagram of my first track (from SoundCloud) shows that the notes **D**, **G**, and **A** appear frequently throughout the track. These notes often go together in the key of D major, so it’s likely that the track is based in that key. Their regular appearance also suggests that the track has a stable and repeating structure. If you listen to it, it sounds like a classic game soundtrack, with energetic beats that feel similar to what you'd hear in an anime-style video game (Persona 5 comes to mind as a perfect match). However, since the track is probably some kind of mashup, the harmony shifts later on. Around the 2-minute mark, the **note F** becomes more prominent, indicating a change in the musical idea. Even though the core sounds stay the same, the pattern in which they’re played changes noticeably.
 
 The second track, which I generated using AI, looks very different. At the beginning, the chromagram shows strong, clear stripes for the notes **A#/Bb**, **D#/Eb**, and **F**. These notes are repeated with high intensity, suggesting they’re part of a loop. This might mean the track is in **Bb minor** or **Eb major**, or at least centered around those notes. Because the track was made with AI, the repetition at the start feels more structured and predictable. The whole song is easy to follow up until around the 1-minute mark—then the structure suddenly changes. You can clearly see on the chromagram that the pitch classes shift quickly, with no smooth transition. This abrupt change reflects how AI-generated music can sometimes lack natural progression. As for me, this track sound like two sepeate ones.
 
@@ -601,9 +599,9 @@ plot_second_cepsto <- "features/aleksandra-b-2.json" |>                      # T
 ggsave("first_cepsto.png", plot_first_cepsto, width = 10, height = 8) 
 ggsave("second_cepsto.png", plot_second_cepsto, width = 10, height = 8) 
 
-text_output_chroma <- "The cepstrogram of my first track shows that most of the energy is focused in the lower cepstral coefficients (around 0–2), which means the timbre stays quite consistent throughout the song. However, there’s a noticeable change near the end, especially after the 200-second mark. The intensity there increases (shown in red).I think this happens because the track introduces more different sounds near the end, creating a kind of ‘lift’ or climax before it finishes, so the listener feels that the track is wrapping up.
+text_output_chroma <- "The cepstrogram of my first track shows that **most of the energy is focused in the lower cepstral coefficients (around 0–2)**, which means the **timbre stays quite consistent throughout the track**. However, there’s a noticeable change near the end, especially after the 200-second mark. The intensity there increases (shown in red).I think this happens because the track introduces more different sounds near the end, creating a kind of ‘lift’ or climax before it finishes, so the listener feels that the track is wrapping up.
 
-In contrast, the cepstrogram of my second track, which I created using AI, shows strong and steady energy in the lower coefficients (especially 0 and 1) across the whole timeline. This means the timbre barely changes, which makes sense since the track is loop-based. Unlike the first track, there are no big changes or dramatic shifts. This supports the idea that the track doesn’t have clear sections like verses or choruses—it just keeps the same sound texture the whole time. It’s especially interesting that around the 60-second mark, the feeling of the track changes — I personally expected the energy to change as well. But even though the sound becomes different, the energy level stays about the same."
+In contrast, the cepstrogram of my second track, which I created using AI, shows **strong and steady energy in the lower coefficients (especially 0 and 1) across the whole timeline**. This means the timbre barely changes, which makes sense since the track is loop-based. Unlike the first track, there are no big changes or dramatic shifts. This supports the idea that the **track doesn’t have clear sections like verses or choruses** — it just keeps the same sound texture the whole time. It’s especially interesting that around the 60-second mark, the feeling of the track changes — I personally expected the energy to change as well. But even though the sound becomes different, the energy level stays about the same."
 
 cat("<div style='display: flex; flex-direction: row;'>") 
 cat("<div style='display: flex; flex-direction: row;'>") 
@@ -616,7 +614,7 @@ cat("</div>")
 
 ### Summary
 
-When comparing the two tracks, I can see some differences between a human-made track and an AI-generated one. The first track from SoundCloud feels more natural and dynamic — it slowly builds up, and toward the end, you can hear a shift in energy and structure. It changes over time, which makes it more interesting to listen to. On the other hand, the AI track is more repetitive. It uses the same sounds and patterns for a long time, and even though the vibe changes a bit around the one-minute mark, the energy level stays pretty much the same. It sounds more loop-based and less expressive. So overall, the human-made track feels more alive, while the AI one is more predictable.
+When comparing the two tracks, I can see some differences between a human-made track and an AI-generated one. The first track from SoundCloud feels more natural and dynamic — it slowly builds up, and toward the end, you can hear a shift in energy and structure. It changes over time, which makes it more interesting to listen to. On the other hand, the AI track is more repetitive. It uses the same sounds and patterns for a long time, and even though the vibe changes a bit around the one-minute mark, the energy level stays pretty much the same. It sounds more loop-based and less expressive. So overall, **the human-made track feels more alive and creative, while the AI one is more predictable.**
 
 Self-Similarity Matrices {.storyboard}
 =========================================
@@ -654,13 +652,13 @@ ggsave("second_chroma_ssm.png", plot_second_chroma_ssm, width = 10, height = 8)
 
 
 text_output_chroma_ssm <- "
-The self-similarity matrix of my first track (from SoundCloud) doesn’t have a super clear pattern, but it looks textured and detailed. There aren’t obvious repeated blocks, which suggests the song doesn’t just loop the same thing over and over. Instead, there are lots of smaller connections between different parts of the track. That means the harmony changes, but there are still some repeating ideas spread out across the song.
+The self-similarity matrix of my first track (from SoundCloud) doesn’t have a super clear pattern, but it looks textured and detailed. There aren’t obvious repeated blocks, which suggests the song doesn’t just loop the same thing over and over. Instead, there are lots of smaller connections between different parts of the track. That means **the harmony changes, but there are still some repeating ideas spread out across the song.**
 
 This fits with how the first track sounds — more natural and evolving, kind of like a mashup or something with multiple sections. It doesn’t follow a strict loop structure, but still has parts that relate to each other.
 
-The matrix for my second track (made with AI) is very different. It has a clear repeating pattern, especially in the first half — you can actually see a checkerboard-like shape. That’s a sign that the same musical idea is repeated over and over. In the second half, it becomes a bit more varied, but it still has a lot of repetition. 
+The matrix for my second track (made with AI) is very different. It has a clear repeating pattern, especially in the first half — we can actually see a checkerboard-like shape. That’s a sign that the same musical idea is repeated over and over. In the second half, it becomes a bit more varied, but it still has a lot of repetition. 
 
-So overall, this plot confirms what I saw in the chromagram and cepstrogram: the AI track is built around a few loops, while the SoundCloud one is more varied and complex.
+So overall, this plot confirms what I saw in the chromagram and cepstrogram: **the AI track is built around a few loops, while the SoundCloud one is more varied and complex.**
 "
 # Generate HTML output
 cat("<div style='display: flex; flex-direction: row;'>") 
@@ -721,7 +719,7 @@ cat("</div>")
 ```
 
 
-Chordogram {.storyboard}
+Chordograms {.storyboard}
 =========================================
 ### Chordagrams
 ```{r chordogram_plots, echo=FALSE, results='asis'}
@@ -848,7 +846,7 @@ plot_second_tempogram <- "features/aleksandra-b-2.json" |>
 ggsave("first_tempogram.png", plot_first_tempogram, width = 10, height = 8)
 ggsave("second_tempogram.png", plot_second_tempogram, width = 10, height = 8)
 
-text_output_tempogram <- "These tempograms compare the rhythmic patterns of two tracks, revealing distinct tempo behaviors. The first tempogram, from my SoundCloud track, shows a very stable tempo around 140 BPM. It stays almost flat throughout the whole song, with just a bit of a second pulse visible around 100 BPM. This is common in electronic tracks, especially those made for gaming or dancing — they often have a steady rhythm to keep the energy up and make them easy to follow.
+text_output_tempogram <- "These tempograms compare the rhythmic patterns of two tracks, revealing distinct tempo behaviors. The first tempogram, from my SoundCloud track, shows **a very stable tempo around 140 BPM.** It stays almost flat throughout the whole song, with just a bit of a second pulse visible around 100 BPM. This is common in electronic tracks, especially those made for gaming or dancing — they often have a steady rhythm to keep the energy up and make them easy to follow.
 
 The second tempogram, from my AI-generated track, looks a bit more dynamic. The main tempo is around 100 BPM, but it slightly shifts and wobbles, especially in the middle of the track. That dip in the curve around the 50–60 second mark could mean the AI made a sudden change in rhythm or switched to a new section. It’s not as smooth as a human-made transition.
 
@@ -930,11 +928,11 @@ ggsave("energy_plot.png", plot = two_plots, width = 10, height = 8)
 # Text explanation
 text_output2 <- "
 <p style='font-size: 16px; line-height: 1.5;'>
-The first graph shows low and steady energy novelty throughout. There are some small spikes around 50s and 100s, but overall, the energy stays quite consistent. This makes sense for a track that’s smooth and gradually builds up or transitions without sudden changes. It gives the feeling of a chill, continuous flow.
+The first graph shows low and steady energy novelty throughout. There are some small spikes around 50s and 100s, but overall, **the energy stays quite consistent.** This makes sense for a track that’s smooth and gradually builds up or transitions without sudden changes. It gives the feeling of a chill, continuous flow.
 
 The second graph looks very different. There are frequent and sharp spikes in the beginning, meaning there are a lot of quick energy changes, like sudden beats or shifts in instruments. But after the 60-second mark, the spikes get smaller and happen less often, which probably means the track becomes more repetitive and less surprising.
 
-In short, the human-made track has stable energy with a few soft transitions, while the AI track starts out very active, but settles into a loop-like pattern with fewer changes later on.
+In short, **the human-made track has stable energy with a few soft transitions, while the AI track starts out very active, but settles into a loop-like pattern with fewer changes later on.**
 </p>
 "
 
@@ -968,9 +966,9 @@ fig4 <- (ggplot(plot_second_spectral, aes(t, novelty)) +
 two_spec_plots <- fig3 / fig4
 
 text_output1 <- "
-The first graph, showing spectral novelty of my SoundCloud track, has a lot of ups and downs throughout the whole song. This means that there are frequent changes in sound, like changes in rhythm, or shifts in energy. It stays fairly active across the track, especially around the 50s and 140s marks, where transitions happen. The small drop at the very end shows the track is winding down.
+The first graph, showing spectral novelty of my SoundCloud track, has a lot of ups and downs throughout the whole song. This means that there are **frequent changes in sound, like changes in rhythm, or shifts in energy.** It stays fairly active across the track, especially around the 50s and 140s marks, where transitions happen. The small drop at the very end shows the track is winding down.
 
-The second graph, for my AI-generated track, is more structured and divided into clear sections. It starts off with very high novelty, which means lots of changes in sound early on, but then the novelty drops sharply around 50 seconds and stays low for a while. This suggests that the AI track becomes repetitive and doesn’t introduce many new elements in the middle. There's a small pickup near the end, but it's not as dramatic.
+The second graph, for my AI-generated track, is more structured and divided into clear sections. It starts off with very high novelty, which means lots of changes in sound early on, but then the novelty drops sharply around 50 seconds and stays low for a while. This suggests that **the AI track becomes repetitive and doesn’t introduce many new elements in the middle.** There's a small pickup near the end, but it's not as dramatic.
 
 Overall, the human-made track is more dynamic and changes more over time, while the AI-made one feels more predictable, with a burst of variety at the beginning followed by looped, repeated patter
 "
